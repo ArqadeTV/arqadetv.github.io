@@ -1,162 +1,186 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Locked PDF Viewer</title>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+        <title>Locked PDF Viewer</title>
+        
+        <!-- iOS Web App Configuration -->
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+        <meta name="apple-mobile-web-app-title" content="PDF Viewer">
+        
+        <!-- Link to the PWA Manifest -->
+        <link rel="manifest" href="manifest.json">
     
-    <!-- iOS Web App Configuration -->
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="PDF Viewer">
+        <!-- Verified PDF.js Core Engine (v2.6.347) -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.6.347/pdf.min.js" integrity="sha512-Z8CqofpIcnJN80feS2uccz+pXWgZzeKxDsDNMD/dJ6997/LSRY+W4NmEt9acwR+Gt9OHN0kkI1CTianCwoqcjQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     
-    <!-- Link to the PWA Manifest -->
-    <link rel="manifest" href="manifest.json">
-
-    <!-- Verified PDF.js Core Engine (v2.6.347) -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.6.347/pdf.min.js" integrity="sha512-Z8CqofpIcnJN80feS2uccz+pXWgZzeKxDsDNMD/dJ6997/LSRY+W4NmEt9acwR+Gt9OHN0kkI1CTianCwoqcjQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-
-    <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body, html { width: 100%; height: 100%; overflow-x: hidden; background-color: #525659; font-family: sans-serif; }
-        #viewer-container { width: 100%; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 20px 0; }
-        .page-container { position: relative; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); background: white; }
-        canvas { display: block; max-width: 100%; height: auto; }
+        <style>
+            * { box-sizing: border-box; margin: 0; padding: 0; }
+            body, html { width: 100%; height: 100%; overflow-x: hidden; background-color: #525659; font-family: sans-serif; }
+            #viewer-container { width: 100%; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 20px 0; }
+            .page-container { position: relative; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); background: white; }
+            canvas { display: block; max-width: 100%; height: auto; }
+            
+            /* Essential styles for the interactive link layer */
+            .annotationLayer { position: absolute; top: 0; left: 0; right: 0; bottom: 0; pointer-events: auto; }
+            .annotationLayer a { position: absolute; cursor: pointer; display: block; }
+            .annotationLayer .linkAnnotation > a { width: 100%; height: 100%; }
+            
+            /* Status window styling */
+            #status { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 1.2rem; background: rgba(0,0,0,0.8); padding: 15px 25px; border-radius: 8px; z-index: 9999; text-align: center; }
+        </style>
+    </head>
+    <body>
+        <!-- 1. The Home Launcher Form Box -->
+        <div class="card">
+            <h1>Secure PDF Hub</h1>
+            <p>Enter a PDF web address below to lock it into your full-screen app viewer interface.</p>
+            <form id="launcher-form">
+                <div class="input-group">
+                    <label for="pdf-url">PDF File Web Link</label>
+                    <input type="url" id="pdf-url" placeholder="https://example.com" required autocomplete="off">
+                    <div id="error-msg" class="error">Please enter a valid web link pointing to a .pdf file.</div>
+                </div>
+                <button type="submit">Launch PDF Viewer</button>
+            </form>
+        </div>
+    
+        <!-- 2. The PDF Document Display Canvas List -->
+        <div id="status" style="display:none;">Loading document...</div>
+        <div id="viewer-container"></div>
+    
+        <!-- Insert the updated javascript block right here -->
+        <script>
+            // Set the background worker to match version 2.6.347 precisely
+            pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cloudflare.com';
         
-        /* Essential styles for the interactive link layer */
-        .annotationLayer { position: absolute; top: 0; left: 0; right: 0; bottom: 0; pointer-events: auto; }
-        .annotationLayer a { position: absolute; cursor: pointer; display: block; }
-        .annotationLayer .linkAnnotation > a { width: 100%; height: 100%; }
+            // 1. Check if a PDF URL parameter is already loaded in the web browser address bar
+            const urlParams = new URLSearchParams(window.location.search);
+            let pdfUrl = urlParams.get('url');
+            const container = document.getElementById('viewer-container');
+            const statusDiv = document.getElementById('status');
+            const launcherCard = document.querySelector('.card'); // Selects the input form block
         
-        /* Status window styling */
-        #status { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 1.2rem; background: rgba(0,0,0,0.8); padding: 15px 25px; border-radius: 8px; z-index: 9999; text-align: center; }
-    </style>
-</head>
-<body>
-
-    <div id="status">Loading document...</div>
-    <div id="viewer-container"></div>
-
-    <script>
-        /*// Set the background worker to match version 2.6.347 precisely
-        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cloudflare.com';
-
-        // Read the ?url= link parameter
-        const urlParams = new URLSearchParams(window.location.search);
-        const pdfUrl = urlParams.get('url');
-        const container = document.getElementById('viewer-container');
-        const statusDiv = document.getElementById('status');
-
-        if (!pdfUrl) {
-            statusDiv.innerHTML = "Error: Please provide a PDF URL link.<br><small style='color:#ccc'>Example: ?url=https://example.com</small>";
-        } else {
-            loadPDF(pdfUrl);
-        }
-
-        // Initialize and process the document
-        async function loadPDF(url) {
-            try {
-                const loadingTask = pdfjsLib.getDocument(url);
-                const pdf = await loadingTask.promise;
-                statusDiv.style.display = 'none'; // Hide loading box
-
-                // Loop through and render every single page sequentially
-                for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
-                    await renderPage(pdf, pageNum);
+            if (pdfUrl) {
+                // If a PDF parameter exists, hide the input box and fire up the lazy loader
+                if (launcherCard) launcherCard.style.display = 'none';
+                statusDiv.style.display = 'block';
+                loadPDF(pdfUrl);
+            } else {
+                // If no parameter is found, hide the loader message and display the entry form
+                if (statusDiv) statusDiv.style.display = 'none';
+            }
+        
+            // 2. Handle the Form Submission (Auto-attaching CORS proxy if needed)
+            const launcherForm = document.getElementById('launcher-form');
+            if (launcherForm) {
+                launcherForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    let urlInput = document.getElementById('pdf-url').value.trim();
+                    const errorMsg = document.getElementById('error-msg');
+                    
+                    if (!urlInput.startsWith('http://') && !urlInput.startsWith('https://')) {
+                        errorMsg.innerText = "URL must start with http:// or https://";
+                        errorMsg.style.display = 'block';
+                        return;
+                    }
+                    
+                    errorMsg.style.display = 'none';
+        
+                    // Detect if the link belongs to an outside website domain
+                    const currentDomain = window.location.hostname;
+                    const isExternal = !urlInput.includes(currentDomain) && !urlInput.startsWith('/') && !urlInput.startsWith('.');
+        
+                    // Inject the CORS proxy middleman to bypass Apple Safari blocking rules
+                    if (isExternal) {
+                        urlInput = 'https://corsproxy.io?' + urlInput;
+                    }
+                    
+                    // Reload the exact same root page with the new target URL safe parameters
+                    const encodedUrl = encodeURIComponent(urlInput);
+                    window.location.href = `/index.html?url=${encodedUrl}`;
+                });
+            }
+        
+            // 3. The Optimized Lazy-Loading PDF Processing Engine
+            async function loadPDF(url) {
+                try {
+                    const loadingTask = pdfjsLib.getDocument(url);
+                    const pdf = await loadingTask.promise;
+                    
+                    statusDiv.style.display = 'none'; // Clear the loading window frame instantly
+        
+                    // Pop page 1 into visual rendering immediately
+                    await renderPage(pdf, 1);
+        
+                    // Fetch and cache the remaining guidebook files quietly in the background
+                    for (let pageNum = 2; pageNum <= pdf.numPages; pageNum++) {
+                        setTimeout(async () => {
+                            await renderPage(pdf, pageNum);
+                        }, 40 * pageNum); 
+                    }
+                } catch (error) {
+                    statusDiv.innerHTML = "Failed to load PDF.<br><small style='color:#ff8080'>Check your link or CORS settings.</small>";
+                    console.error(error);
                 }
-            } catch (error) {
-                statusDiv.innerHTML = "Failed to load PDF.<br><small style='color:#ff8080'>Check if CORS is blocking the external file asset.</small>";
-                console.error(error);
             }
-        }
-
-        // Handle structural layout canvas and link creation
-        async function renderPage(pdf, pageNum) {
-            const page = await pdf.getPage(pageNum);
-            
-            // Layout optimization scale for iPad displays
-            const viewport = page.getViewport({ scale: 1.5 });
-
-            // Set up page block wrapper
-            const pageContainer = document.createElement('div');
-            pageContainer.className = 'page-container';
-            pageContainer.style.width = `${viewport.width}px`;
-            pageContainer.style.height = `${viewport.height}px`;
-            container.appendChild(pageContainer);
-
-            // Construct drawing canvas
-            const canvas = document.createElement('canvas');
-            const context = canvas.getContext('2d');
-            canvas.width = viewport.width;
-            canvas.height = viewport.height;
-            pageContainer.appendChild(canvas);
-
-            // Output the graphical rendering onto the canvas surface
-            await page.render({ canvasContext: context, viewport: viewport }).promise;
-
-            // Generate structural annotation overlay layer for link handling
-            const annotationLayerDiv = document.createElement('div');
-            annotationLayerDiv.className = 'annotationLayer';
-            pageContainer.appendChild(annotationLayerDiv);
-
-            const annotations = await page.getAnnotations();
-            
-            // Build clickable anchors using v2 compatible configuration settings
-            pdfjsLib.AnnotationLayer.render({
-                viewport: viewport.clone({ dontFlip: true }),
-                div: annotationLayerDiv,
-                annotations: annotations,
-                page: page,
-                linkService: {
-                    externalLinkTarget: 2, // Force target="_blank" execution natively
-                    externalLinkRel: 'noopener noreferrer',
-                    getAnchorUrl: (anchor) => anchor,
-                    navigateTo: () => {},
-                    baseUrl: null,
-                    isExternalLinkTargetSet: true
+        
+            // 4. Page Rendering Layout Framework
+            async function renderPage(pdf, pageNum) {
+                if(document.getElementById(`page-${pageNum}`)) return;
+        
+                const page = await pdf.getPage(pageNum);
+                const viewport = page.getViewport({ scale: 1.5 });
+        
+                const pageContainer = document.createElement('div');
+                pageContainer.className = 'page-container';
+                pageContainer.id = `page-${pageNum}`;
+                pageContainer.style.width = `${viewport.width}px`;
+                pageContainer.style.height = `${viewport.height}px`;
+                container.appendChild(pageContainer);
+        
+                const canvas = document.createElement('canvas');
+                const context = canvas.getContext('2d');
+                canvas.width = viewport.width;
+                canvas.height = viewport.height;
+                pageContainer.appendChild(canvas);
+        
+                await page.render({ canvasContext: context, viewport: viewport }).promise;
+        
+                const annotationLayerDiv = document.createElement('div');
+                annotationLayerDiv.className = 'annotationLayer';
+                pageContainer.appendChild(annotationLayerDiv);
+        
+                const annotations = await page.getAnnotations();
+                
+                pdfjsLib.AnnotationLayer.render({
+                    viewport: viewport.clone({ dontFlip: true }),
+                    div: annotationLayerDiv,
+                    annotations: annotations,
+                    page: page,
+                    linkService: {
+                        externalLinkTarget: 2, // Keeps links pointing to target="_blank"
+                        externalLinkRel: 'noopener noreferrer',
+                        getAnchorUrl: (anchor) => anchor,
+                        navigateTo: () => {},
+                        baseUrl: null,
+                        isExternalLinkTargetSet: true
+                    }
+                });
+            }
+        
+            // 5. iPad App Window Lockdown Event Trapper
+            document.addEventListener('click', function(e) {
+                const link = e.target.closest('a');
+                if (link && link.href) {
+                    link.target = '_blank';
+                    link.setAttribute('rel', 'noopener noreferrer');
                 }
-            });
-        }
-
-        // Core App Isolation Script
-        // Captures user link selections and locks the execution environment
-        document.addEventListener('click', function(e) {
-            const link = e.target.closest('a');
-            if (link && link.href) {
-                // Ensure target is blank so iOS pops it up into an overlay modal frame
-                link.target = '_blank';
-                link.setAttribute('rel', 'noopener noreferrer');
-            }
-        }, true);
-        */
-        document.getElementById('launcher-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            let urlInput = document.getElementById('pdf-url').value.trim();
-            const errorMsg = document.getElementById('error-msg');
-            
-            if (!urlInput.startsWith('http://') && !urlInput.startsWith('https://')) {
-                errorMsg.innerText = "URL must start with http:// or https://";
-                errorMsg.style.display = 'block';
-                return;
-            }
-            
-            errorMsg.style.display = 'none';
-        
-            // 1. Check if the PDF URL points to an outside website
-            const currentDomain = window.location.hostname;
-            const isExternal = !urlInput.includes(currentDomain) && !urlInput.startsWith('/') && !urlInput.startsWith('.');
-        
-            // 2. If it's an outside link, attach a free public CORS proxy prefix
-            if (isExternal) {
-                urlInput = 'https://corsproxy.io/?' + urlInput;
-            }
-            
-            // 3. Encode the link cleanly and redirect to the viewer subfolder
-            const encodedUrl = encodeURIComponent(urlInput);
-            window.location.href = `/pdf/index.html?url=${encodedUrl}`;
-        });
-
-    </script>
-</body>
+            }, true);
+        </script>
+    
+    </body>
 </html>
