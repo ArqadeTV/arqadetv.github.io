@@ -5,15 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Locked PDF Viewer</title>
     
-    <!-- iOS Web App Configurations -->
+    <!-- iOS Web App Configuration -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="PDF Viewer">
     
-    <!-- PWA Manifest Linking -->
+    <!-- Link to the PWA Manifest -->
     <link rel="manifest" href="manifest.json">
 
-    <!-- Include PDF.js Library for high-fidelity HTML5 rendering -->
+    <!-- Verified PDF.js Core Engine (v2.6.347) -->
     <script src="https://cloudflare.com"></script>
 
     <style>
@@ -23,12 +23,13 @@
         .page-container { position: relative; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); background: white; }
         canvas { display: block; max-width: 100%; height: auto; }
         
-        /* The PDF.js Link Overlay layer */
+        /* Essential styles for the interactive link layer */
         .annotationLayer { position: absolute; top: 0; left: 0; right: 0; bottom: 0; pointer-events: auto; }
-        .annotationLayer a { position: absolute; cursor: pointer; }
+        .annotationLayer a { position: absolute; cursor: pointer; display: block; }
+        .annotationLayer .linkAnnotation > a { width: 100%; height: 100%; }
         
-        /* Status message styling */
-        #status { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 1.2rem; background: rgba(0,0,0,0.7); padding: 15px 25px; border-radius: 8px; z-index: 9999; }
+        /* Status window styling */
+        #status { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 1.2rem; background: rgba(0,0,0,0.8); padding: 15px 25px; border-radius: 8px; z-index: 9999; text-align: center; }
     </style>
 </head>
 <body>
@@ -37,90 +38,92 @@
     <div id="viewer-container"></div>
 
     <script>
-        // Tell PDF.js where the worker script is located
+        // Set the background worker to match version 2.6.347 precisely
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cloudflare.com';
 
-        // 1. Parse the ?url= parameter from the browser URL address
+        // Read the ?url= link parameter
         const urlParams = new URLSearchParams(window.location.search);
         const pdfUrl = urlParams.get('url');
         const container = document.getElementById('viewer-container');
         const statusDiv = document.getElementById('status');
 
         if (!pdfUrl) {
-            statusDiv.innerHTML = "Error: Please provide a PDF URL link.<br><small>?url=https://example.com</small>";
+            statusDiv.innerHTML = "Error: Please provide a PDF URL link.<br><small style='color:#ccc'>Example: ?url=https://example.com</small>";
         } else {
             loadPDF(pdfUrl);
         }
 
-        // 2. Load and Render the PDF file
+        // Initialize and process the document
         async function loadPDF(url) {
             try {
                 const loadingTask = pdfjsLib.getDocument(url);
                 const pdf = await loadingTask.promise;
-                statusDiv.style.display = 'none'; // Hide loading status
+                statusDiv.style.display = 'none'; // Hide loading box
 
-                // Loop through and render every single page
+                // Loop through and render every single page sequentially
                 for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
                     await renderPage(pdf, pageNum);
                 }
             } catch (error) {
-                statusDiv.innerText = "Failed to load PDF. Ensure CORS allows access to the file.";
+                statusDiv.innerHTML = "Failed to load PDF.<br><small style='color:#ff8080'>Check if CORS is blocking the external file asset.</small>";
                 console.error(error);
             }
         }
 
-        // 3. Render page canvas and attach the custom link behavior
+        // Handle structural layout canvas and link creation
         async function renderPage(pdf, pageNum) {
             const page = await pdf.getPage(pageNum);
             
-            // Optimize sizing for iPad screens
+            // Layout optimization scale for iPad displays
             const viewport = page.getViewport({ scale: 1.5 });
 
-            // Create wrapper container for the specific page
+            // Set up page block wrapper
             const pageContainer = document.createElement('div');
             pageContainer.className = 'page-container';
             pageContainer.style.width = `${viewport.width}px`;
             pageContainer.style.height = `${viewport.height}px`;
             container.appendChild(pageContainer);
 
-            // Create canvas element
+            // Construct drawing canvas
             const canvas = document.createElement('canvas');
             const context = canvas.getContext('2d');
             canvas.width = viewport.width;
             canvas.height = viewport.height;
             pageContainer.appendChild(canvas);
 
-            // Draw the structural visual page
+            // Output the graphical rendering onto the canvas surface
             await page.render({ canvasContext: context, viewport: viewport }).promise;
 
-            // Create the link/annotation layer on top
+            // Generate structural annotation overlay layer for link handling
             const annotationLayerDiv = document.createElement('div');
             annotationLayerDiv.className = 'annotationLayer';
             pageContainer.appendChild(annotationLayerDiv);
 
             const annotations = await page.getAnnotations();
             
-            // Build out clickable HTML anchors based on internal document hyperlinks
+            // Build clickable anchors using v2 compatible configuration settings
             pdfjsLib.AnnotationLayer.render({
                 viewport: viewport.clone({ dontFlip: true }),
                 div: annotationLayerDiv,
                 annotations: annotations,
                 page: page,
                 linkService: {
-                    externalLinkTarget: 2, // Forces PDF.js internal config to use target="_blank"
+                    externalLinkTarget: 2, // Force target="_blank" execution natively
                     externalLinkRel: 'noopener noreferrer',
                     getAnchorUrl: (anchor) => anchor,
-                    navigateTo: () => {}
+                    navigateTo: () => {},
+                    baseUrl: null,
+                    isExternalLinkTargetSet: true
                 }
             });
         }
 
-        // 4. Standalone iPad Protection Script
-        // If a hyperlink is clicked inside the app interface, intercept it
+        // Core App Isolation Script
+        // Captures user link selections and locks the execution environment
         document.addEventListener('click', function(e) {
             const link = e.target.closest('a');
             if (link && link.href) {
-                // Force target to blank to let iPad open it in a sub-modal framework
+                // Ensure target is blank so iOS pops it up into an overlay modal frame
                 link.target = '_blank';
                 link.setAttribute('rel', 'noopener noreferrer');
             }
