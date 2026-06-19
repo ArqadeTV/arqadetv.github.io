@@ -1,0 +1,9 @@
+{
+  "name": "Secure PDF Viewer",
+  "short_name": "PDF Viewer",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#525659",
+  "theme_color": "#525659",
+  "scope": "./index.html"
+}
