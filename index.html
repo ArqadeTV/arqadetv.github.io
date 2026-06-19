@@ -38,7 +38,7 @@
     <div id="viewer-container"></div>
 
     <script>
-        // Set the background worker to match version 2.6.347 precisely
+        /*// Set the background worker to match version 2.6.347 precisely
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cloudflare.com';
 
         // Read the ?url= link parameter
@@ -128,6 +128,35 @@
                 link.setAttribute('rel', 'noopener noreferrer');
             }
         }, true);
+        */
+        document.getElementById('launcher-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            let urlInput = document.getElementById('pdf-url').value.trim();
+            const errorMsg = document.getElementById('error-msg');
+            
+            if (!urlInput.startsWith('http://') && !urlInput.startsWith('https://')) {
+                errorMsg.innerText = "URL must start with http:// or https://";
+                errorMsg.style.display = 'block';
+                return;
+            }
+            
+            errorMsg.style.display = 'none';
+        
+            // 1. Check if the PDF URL points to an outside website
+            const currentDomain = window.location.hostname;
+            const isExternal = !urlInput.includes(currentDomain) && !urlInput.startsWith('/') && !urlInput.startsWith('.');
+        
+            // 2. If it's an outside link, attach a free public CORS proxy prefix
+            if (isExternal) {
+                urlInput = 'https://corsproxy.io/?' + urlInput;
+            }
+            
+            // 3. Encode the link cleanly and redirect to the viewer subfolder
+            const encodedUrl = encodeURIComponent(urlInput);
+            window.location.href = `/pdf/index.html?url=${encodedUrl}`;
+        });
+
     </script>
 </body>
 </html>
