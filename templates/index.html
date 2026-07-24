@@ -5,10 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Arqade | Official Homepage</title>
     <!-- Link to your external stylesheet -->
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-    <script src="utils/scripts/navbar.js?v=2"></script>
+    <script src="https://arqadetv.github.io/utils/scripts/navbar.js?v=2"></script>
     <div class="container">
         <!-- Main Channel Header -->
         <header>
@@ -41,6 +41,6 @@
     </div>
 
     <!-- Link to your external JavaScript -->
-    <script src="script.js"></script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
 </html>
