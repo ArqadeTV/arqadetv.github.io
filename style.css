@@ -25,6 +25,7 @@ body {
 .container {
     max-width: 750px;
     margin: 0 auto;
+    padding: 3rem 0rem;
 }
 
 /* Header Branding */
