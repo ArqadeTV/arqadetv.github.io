@@ -18,18 +18,21 @@ body {
     background-color: var(--bg-color);
     color: var(--text-color);
     line-height: 1.6;
-    padding: 0 1rem;
+    /* FIX: Set to 0 so the navbar can stretch completely edge-to-edge */
+    padding: 0; 
 }
 
 /* Container Layout */
 .container {
     max-width: 750px;
     margin: 0 auto;
-    
-    /* FIX: Changed from top-padding/bottom-padding to valid CSS properties */
-    padding-top: 6rem;   /* Pushes content comfortably below your 50px navbar */
+    padding-top: 6rem;   
     padding-bottom: 3rem;
+    /* FIX: This replaces the body padding so your text stays safe on mobile */
+    padding-left: 1rem;
+    padding-right: 1rem;
 }
+
 
 /* Header Branding */
 header {
