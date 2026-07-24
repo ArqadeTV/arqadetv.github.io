@@ -25,9 +25,10 @@ body {
 .container {
     max-width: 750px;
     margin: 0 auto;
-    top-padding: 4rem;
-    bottom-padding: 3rem;
-    top: 4rem;
+    
+    /* FIX: Changed from top-padding/bottom-padding to valid CSS properties */
+    padding-top: 6rem;   /* Pushes content comfortably below your 50px navbar */
+    padding-bottom: 3rem;
 }
 
 /* Header Branding */
