@@ -1,6 +1,6 @@
 {
-  "name": "Secure PDF Viewer",
-  "short_name": "PDF Viewer",
+  "name": "The homepage of YouTuber RealArqade.",
+  "short_name": "RealArqade Home",
   "start_url": "/index.html",
   "display": "standalone",
   "background_color": "#525659",
