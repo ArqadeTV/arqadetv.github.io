@@ -18,14 +18,15 @@ body {
     background-color: var(--bg-color);
     color: var(--text-color);
     line-height: 1.6;
-    padding: 0rem 1rem;
+    padding: 0 1rem;
 }
 
 /* Container Layout */
 .container {
     max-width: 750px;
     margin: 0 auto;
-    padding: 3rem 0rem;
+    top-padding: 4rem;
+    bottom-padding: 3rem;
 }
 
 /* Header Branding */
