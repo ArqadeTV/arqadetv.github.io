@@ -1,0 +1,137 @@
+/* Base Reset & Gaming Color Palette */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --bg-color: #0b0e14;
+    --text-color: #f1f5f9;
+    --twitch-color: #9146ff;
+    --youtube-color: #ff0000;
+    --card-bg: #161b26;
+}
+
+body {
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    line-height: 1.6;
+    padding: 3rem 1rem;
+}
+
+/* Container Layout */
+.container {
+    max-width: 750px;
+    margin: 0 auto;
+}
+
+/* Header Branding */
+header {
+    text-align: center;
+    margin-bottom: 3.5rem;
+}
+
+h1 {
+    font-size: 3rem;
+    font-weight: 800;
+    letter-spacing: -1px;
+    text-transform: uppercase;
+    background: linear-gradient(45deg, #ffffff, #94a3b8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 0.25rem;
+    transition: transform 0.3s ease;
+}
+
+/* Fun interactive class triggered by JS */
+h1.pulse {
+    transform: scale(1.05);
+}
+
+.subtitle {
+    font-size: 1.1rem;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+/* Streamer Platform Grid */
+.platform-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+}
+
+@media (min-width: 550px) {
+    .platform-grid { 
+        grid-template-columns: 1fr 1fr; 
+    }
+}
+
+.btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.2rem;
+    border-radius: 12px;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #ffffff;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.btn:hover {
+    transform: translateY(-3px);
+}
+
+.btn-twitch {
+    background: var(--twitch-color);
+    box-shadow: 0 4px 20px rgba(145, 70, 255, 0.3);
+}
+
+.btn-twitch:hover {
+    box-shadow: 0 6px 24px rgba(145, 70, 255, 0.5);
+}
+
+.btn-youtube {
+    background: var(--youtube-color);
+    box-shadow: 0 4px 20px rgba(255, 0, 0, 0.3);
+}
+
+.btn-youtube:hover {
+    box-shadow: 0 6px 24px rgba(255, 0, 0, 0.5);
+}
+
+/* About Section */
+.about-box {
+    background: var(--card-bg);
+    border: 1px solid #242f47;
+    padding: 2rem;
+    border-radius: 16px;
+    text-align: center;
+    margin-bottom: 4rem;
+}
+
+.about-box h2 {
+    font-size: 1.4rem;
+    margin-bottom: 0.75rem;
+    color: #ffffff;
+}
+
+.about-box p {
+    color: #94a3b8;
+    font-size: 1.05rem;
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    font-size: 0.85rem;
+    color: #475569;
+    border-top: 1px solid #1e293b;
+    padding-top: 2rem;
+}
