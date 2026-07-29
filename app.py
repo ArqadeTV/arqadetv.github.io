@@ -38,3 +38,6 @@ def page_not_found(error):
     
     # 4. Pass the suggestions list to the template
     return render_template('404.html', suggestions=suggestions), 404
+
+if __name__ == '__main__':
+    app.run(debug=False)
