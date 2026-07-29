@@ -1,24 +1,34 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <title>Home of ArqadeTV</title>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arqade | Content Creator & Streamer</title>
     <style>
-      * {
-        border: none;
-        padding: none;
-        overflow: hidden;
-      }
-      
-      iframe {
-        height: 100vh;
-        width: 100vw;
-        border: none;
-        padding: none;
-        display: block;
-      }
+        /* 1. Remove the default spacing from the browser window */
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden; /* Prevents double scrollbars */
+            background-color: #0b0e14; /* Matches Arqade's dark theme during load */
+        }
+
+        /* 2. Make the iframe stretch perfectly to all edges */
+        iframe {
+            display: block;
+            width: 100%;
+            height: 100%;
+            border: none;
+            margin: 0;
+            padding: 0;
+        }
     </style>
-  </head>
-  <body>
-    <iframe src="https://arqadetv-github-io.onrender.com">Enable iframes!</iframe>
-  </body>
+</head>
+<body>
+
+    <iframe src="https://arqadetv-github-io.onrender.com/"></iframe>
+
+</body>
 </html>
