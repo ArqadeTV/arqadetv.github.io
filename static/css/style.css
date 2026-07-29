@@ -20,7 +20,6 @@ body {
     background-color: var(--bg-color);
     color: var(--text-color);
     line-height: 1.6;
-    /* FIX: Set to 0 so the navbar can stretch completely edge-to-edge */
     padding: 0; 
 }
 
@@ -30,7 +29,6 @@ body {
     margin: 0 auto;
     padding-top: 6rem;   
     padding-bottom: 3rem;
-    /* FIX: This replaces the body padding so your text stays safe on mobile */
     padding-left: 1rem;
     padding-right: 1rem;
 }
@@ -53,7 +51,6 @@ h1 {
     transition: transform 0.3s ease;
 }
 
-/* Fun interactive class triggered by JS */
 h1.pulse {
     transform: scale(1.05);
 }
@@ -65,11 +62,11 @@ h1.pulse {
     letter-spacing: 2px;
 }
 
-/* Layout Flow Controller - Controls the equal gaps */
-.main-content-flow {
+/* Controls the equal vertical gaps directly on the main tag */
+.main-flow {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem; /* Forces mathematically identical spacing between ALL elements */
+    gap: 1.5rem; /* Forces identical spacing between grid, wide button, and about box */
     width: 100%;
 }
 
@@ -77,8 +74,8 @@ h1.pulse {
 .platform-grid {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 1.5rem; /* Horizontal gap on mobile split */
-    margin: 0;   /* Controlled by parent flow gap */
+    gap: 1.5rem; 
+    margin: 0;   
 }
 
 @media (min-width: 550px) {
@@ -90,7 +87,7 @@ h1.pulse {
 /* Wide Container for the Minecraft Server Link */
 .server-link-container {
     width: 100%;
-    margin: 0;   /* Controlled by parent flow gap */
+    margin: 0;   
 }
 
 /* General Button Core Styles */
@@ -133,7 +130,7 @@ h1.pulse {
 
 /* Minecraft Button Styling */
 .btn-minecraft {
-    width: 100%; /* Spans 100% width of its wrapper container */
+    width: 100%; 
     background: var(--minecraft-color);
     box-shadow: 0 4px 20px rgba(46, 125, 50, 0.3);
 }
@@ -149,8 +146,7 @@ h1.pulse {
     padding: 2rem;
     border-radius: 16px;
     text-align: center;
-    margin-top: 0; /* Ensures no extra hidden margins push the layout down */
-    margin-bottom: 4rem; /* Keeps normal layout space above the footer */
+    margin: 0; /* Reset margins completely so flex gap handles spacing perfectly */
 }
 
 .about-box h2 {
@@ -171,4 +167,5 @@ footer {
     color: #475569;
     border-top: 1px solid #1e293b;
     padding-top: 2rem;
+    margin-top: 4rem; /* Pushes footer safely below content flow */
 }
