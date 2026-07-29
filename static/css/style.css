@@ -27,7 +27,7 @@ body {
 .container {
     max-width: 750px;
     margin: 0 auto;
-    padding-top: 3.5rem;   /* Reduced from 6rem to pull the whole page up */
+    padding-top: 4rem;   /* Reduced from 6rem to pull the whole page up */
     padding-bottom: 1.5rem;
     padding-left: 1rem;
     padding-right: 1rem;
@@ -36,7 +36,6 @@ body {
 /* Header Branding */
 header {
     text-align: center;
-    margin-top: 1rem;
     margin-bottom: 2rem; /* Reduced from 3.5rem to save vertical screen space */
 }
 
