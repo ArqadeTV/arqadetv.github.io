@@ -9,7 +9,12 @@ def home():
 
 @app.route('/index.html')
 def redirect_to_root():
-    return redirect(url_for('home'), code=301)
+    return redirect(url_for('home'))
+
+@app.errorhandler(404)
+def page_not_found(error):
+    # The 'error' argument receives the actual exception details
+    return render_template('404.html'), 404
 
 if __name__ == '__main__':
     app.run(debug=False)
