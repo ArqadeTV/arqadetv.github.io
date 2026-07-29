@@ -11,6 +11,7 @@
     --text-color: #f1f5f9;
     --twitch-color: #9146ff;
     --youtube-color: #ff0000;
+    --minecraft-color: #2e7d32; /* Rich emerald green for the SMP theme */
     --card-bg: #161b26;
 }
 
@@ -70,13 +71,19 @@ h1.pulse {
     display: grid;
     grid-template-columns: 1fr;
     gap: 1.5rem;
-    margin-bottom: 3rem;
+    margin-bottom: 1.5rem; /* Reduced to align closely with the wide button below */
 }
 
 @media (min-width: 550px) {
     .platform-grid { 
         grid-template-columns: 1fr 1fr; 
     }
+}
+
+/* Wide Container for the Minecraft Server Link */
+.server-link-container {
+    width: 100%;
+    margin-bottom: 3rem; /* Re-establishes normal spacing before the bio card */
 }
 
 .btn {
@@ -112,6 +119,17 @@ h1.pulse {
 
 .btn-youtube:hover {
     box-shadow: 0 6px 24px rgba(255, 0, 0, 0.5);
+}
+
+/* New Minecraft Button Styles */
+.btn-minecraft {
+    width: 100%; /* Spans 100% width of the parent container */
+    background: var(--minecraft-color);
+    box-shadow: 0 4px 20px rgba(46, 125, 50, 0.3);
+}
+
+.btn-minecraft:hover {
+    box-shadow: 0 6px 24px rgba(46, 125, 50, 0.5);
 }
 
 /* About Section */
