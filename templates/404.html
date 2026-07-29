@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page Not Found - 404</title>
+    <style>
+        body {
+            background-color: #f9fafb;
+            color: #2d3748;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        .container {
+            text-align: center;
+            padding: 2rem;
+            max-width: 28rem;
+            margin: 0 auto;
+        }
+        .error-code {
+            font-size: 6rem;
+            font-weight: 900;
+            color: #4f46e5;
+            margin: 0;
+        }
+        .error-title {
+            font-size: 1.875rem;
+            font-weight: 700;
+            color: #111827;
+            margin: 1rem 0 0 0;
+        }
+        .suggestion-box {
+            background-color: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin: 1.5rem 0;
+            text-align: left;
+        }
+        .suggestion-title {
+            font-size: 0.875rem;
+            font-weight: 700;
+            color: #374151;
+            margin-top: 0;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            tracking-wider: 0.05em;
+        }
+        .suggestion-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .suggestion-item {
+            margin: 0.25rem 0;
+        }
+        .suggestion-link {
+            color: #4f46e5;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .suggestion-link:hover {
+            text-decoration: underline;
+        }
+        .home-button {
+            display: inline-block;
+            background-color: #4f46e5;
+            color: #ffffff;
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-decoration: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1 class="error-code">404</h1>
+        <h2 class="error-title">Page Not Found</h2>
+        
+        <!-- Smart Suggestions Block -->
+        {% if suggestions %}
+        <div class="suggestion-box">
+            <p class="suggestion-title">Did you mean to go to?</p>
+            <ul class="suggestion-list">
+                {% for route in suggestions %}
+                <li class="suggestion-item">
+                    <a href="{{ route }}" class="suggestion-link">{{ route }}</a>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% else %}
+        <p style="color: #4b5563; margin: 1rem 0 2rem 0;">
+            Sorry, we couldn’t find the page you’re looking for.
+        </p>
+        {% endif %}
+
+        <a href="{{ url_for('home') }}" class="home-button">
+            Go Back Home
+        </a>
+    </div>
+
+</body>
+</html>
