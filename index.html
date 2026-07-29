@@ -5,17 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Arqade | Content Creator & Streamer</title>
     <style>
-        /* 1. Remove the default spacing from the browser window */
+        /* 1. Prevent parent document scrolling, but permit Safari gestures */
         html, body {
             margin: 0;
             padding: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden; /* Prevents double scrollbars */
-            background-color: #0b0e14; /* Matches Arqade's dark theme during load */
+            width: 100vw;
+            height: 100svh; /* 'svh' guarantees exact mobile Safari dimensions */
+            background-color: #0b0e14;
+            
+            /* Crucial Fix: Allows pull-to-refresh at the top, blocks inner layout breaks */
+            overscroll-behavior-y: contain; 
+            overflow: hidden; 
         }
-
-        /* 2. Make the iframe stretch perfectly to all edges */
+        
+        /* 2. Lock the iframe size so it cannot expand or generate an outer scrollbar */
         iframe {
             display: block;
             width: 100%;
@@ -23,7 +26,11 @@
             border: none;
             margin: 0;
             padding: 0;
+            
+            /* Forces touch-scroll gestures inside the frame to execute perfectly */
+            overscroll-behavior-y: auto; 
         }
+
     </style>
 </head>
 <body>
