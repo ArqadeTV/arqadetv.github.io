@@ -35,7 +35,6 @@ body {
     padding-right: 1rem;
 }
 
-
 /* Header Branding */
 header {
     text-align: center;
@@ -66,12 +65,20 @@ h1.pulse {
     letter-spacing: 2px;
 }
 
+/* Layout Flow Controller - Controls the equal gaps */
+.main-content-flow {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem; /* Forces mathematically identical spacing between ALL elements */
+    width: 100%;
+}
+
 /* Streamer Platform Grid */
 .platform-grid {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 1.5rem;
-    margin-bottom: 1.5rem; /* Reduced to align closely with the wide button below */
+    gap: 1.5rem; /* Horizontal gap on mobile split */
+    margin: 0;   /* Controlled by parent flow gap */
 }
 
 @media (min-width: 550px) {
@@ -83,9 +90,10 @@ h1.pulse {
 /* Wide Container for the Minecraft Server Link */
 .server-link-container {
     width: 100%;
-    margin-bottom: 3rem; /* Re-establishes normal spacing before the bio card */
+    margin: 0;   /* Controlled by parent flow gap */
 }
 
+/* General Button Core Styles */
 .btn {
     display: flex;
     align-items: center;
@@ -103,6 +111,7 @@ h1.pulse {
     transform: translateY(-3px);
 }
 
+/* Twitch Styling */
 .btn-twitch {
     background: var(--twitch-color);
     box-shadow: 0 4px 20px rgba(145, 70, 255, 0.3);
@@ -112,6 +121,7 @@ h1.pulse {
     box-shadow: 0 6px 24px rgba(145, 70, 255, 0.5);
 }
 
+/* YouTube Styling */
 .btn-youtube {
     background: var(--youtube-color);
     box-shadow: 0 4px 20px rgba(255, 0, 0, 0.3);
@@ -121,9 +131,9 @@ h1.pulse {
     box-shadow: 0 6px 24px rgba(255, 0, 0, 0.5);
 }
 
-/* New Minecraft Button Styles */
+/* Minecraft Button Styling */
 .btn-minecraft {
-    width: 100%; /* Spans 100% width of the parent container */
+    width: 100%; /* Spans 100% width of its wrapper container */
     background: var(--minecraft-color);
     box-shadow: 0 4px 20px rgba(46, 125, 50, 0.3);
 }
@@ -139,7 +149,8 @@ h1.pulse {
     padding: 2rem;
     border-radius: 16px;
     text-align: center;
-    margin-bottom: 4rem;
+    margin-top: 0; /* Ensures no extra hidden margins push the layout down */
+    margin-bottom: 4rem; /* Keeps normal layout space above the footer */
 }
 
 .about-box h2 {
