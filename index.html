@@ -12,10 +12,6 @@
             width: 100vw;
             height: 100svh; /* 'svh' guarantees exact mobile Safari dimensions */
             background-color: #0b0e14;
-            
-            /* Crucial Fix: Allows pull-to-refresh at the top, blocks inner layout breaks */
-            overscroll-behavior-y: contain; 
-            overflow: hidden; 
         }
         
         /* 2. Lock the iframe size so it cannot expand or generate an outer scrollbar */
@@ -26,9 +22,6 @@
             border: none;
             margin: 0;
             padding: 0;
-            
-            /* Forces touch-scroll gestures inside the frame to execute perfectly */
-            overscroll-behavior-y: auto; 
         }
 
     </style>
